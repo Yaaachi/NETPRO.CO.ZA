@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -364,6 +363,9 @@ padding:.8rem .9rem; border-radius:2px; font-size:.95rem;
 .field input::placeholder, .field textarea::placeholder{ color:rgba(255,255,255,.35); }
 .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--orange); background:rgba(255,255,255,.08); }
 .form-note{ margin-top:.9rem; font-size:.8rem; color:#B9B3A2; min-height:1.2em; }
+.form-note.is-error{ color:#F3A08C; }
+.form-note.is-success{ color:#8FD19E; }
+.btn[disabled]{ opacity:.6; pointer-events:none; }
 
 .details-card{ background:var(--cream); color:var(--ink); border-radius:var(--radius); padding:clamp(1.75rem,3vw,2.5rem); position:relative; }
 .details-list{ margin-top:1.5rem; display:flex; flex-direction:column; gap:1.2rem; }
@@ -382,6 +384,71 @@ padding:.8rem .9rem; border-radius:2px; font-size:.95rem;
 .checklist{ margin-top:3.5rem; display:flex; flex-wrap:wrap; gap:1rem 2.2rem; }
 .checklist li{ display:flex; align-items:center; gap:.55rem; font-size:.88rem; color:#CFC9B8; font-family:var(--font-mono); }
 .checklist svg{ width:16px; height:16px; color:var(--gold); }
+
+/* ================= FAQ ================= */
+.faq{ margin-top:3rem; }
+.faq-item{ border-bottom:1px solid var(--line-on-light); }
+.faq-trigger{
+width:100%; background:none; border:none; color:inherit; display:flex; align-items:center;
+justify-content:space-between; gap:1rem; padding:1.3rem 0; text-align:left;
+font-family:var(--font-body); font-weight:700; font-size:1rem;
+}
+.faq-trigger .acc-plus{ flex-shrink:0; }
+.faq-trigger .acc-plus::before, .faq-trigger .acc-plus::after{ background:var(--red); }
+.faq-panel{ max-height:0; overflow:hidden; transition:max-height .4s var(--ease); }
+.faq-panel-inner{ padding:0 0 1.4rem; color:#4B463C; font-size:.93rem; line-height:1.7; max-width:62ch; }
+
+/* ================= WHATSAPP + FLOATING CTAs ================= */
+.float-stack{
+position:fixed; right:1.25rem; bottom:1.25rem; z-index:150;
+display:flex; flex-direction:column; align-items:flex-end; gap:.75rem;
+}
+.float-btn{
+display:flex; align-items:center; justify-content:center; width:58px; height:58px; border-radius:50%;
+box-shadow:0 14px 30px -8px rgba(0,0,0,.5); transition:transform .2s var(--ease), box-shadow .2s var(--ease);
+position:relative;
+}
+.float-btn:hover{ transform:translateY(-3px) scale(1.04); }
+.float-btn svg{ width:28px; height:28px; }
+.wa-btn{ background:#25D366; color:#fff; }
+.call-btn{ background:var(--graphite); color:var(--gold); border:1px solid rgba(201,151,46,.4); }
+.wa-btn::after{
+content:""; position:absolute; inset:-4px; border-radius:50%; border:2px solid #25D366;
+opacity:0; animation:wa-pulse 2.4s ease-out infinite;
+}
+@keyframes wa-pulse{
+0%{ opacity:.6; transform:scale(1); }
+100%{ opacity:0; transform:scale(1.35); }
+}
+@media (prefers-reduced-motion:reduce){ .wa-btn::after{ animation:none; } }
+.float-tooltip{
+position:absolute; right:70px; top:50%; transform:translateY(-50%) translateX(6px);
+background:var(--graphite); color:#fff; font-family:var(--font-mono); font-size:.72rem;
+letter-spacing:.04em; padding:.5rem .8rem; border-radius:4px; white-space:nowrap;
+opacity:0; pointer-events:none; transition:opacity .2s var(--ease), transform .2s var(--ease);
+}
+.float-btn:hover .float-tooltip{ opacity:1; transform:translateY(-50%) translateX(0); }
+@media (max-width:640px){ .float-tooltip{ display:none; } }
+
+/* mobile sticky action bar */
+.mobile-bar{
+display:none; position:fixed; left:0; right:0; bottom:0; z-index:140; background:var(--graphite);
+border-top:1px solid var(--line-on-dark); padding:.6rem clamp(1rem,4vw,2rem);
+grid-template-columns:repeat(3,1fr); gap:.6rem;
+padding-bottom:calc(.6rem + env(safe-area-inset-bottom));
+}
+.mobile-bar a{
+display:flex; flex-direction:column; align-items:center; gap:.25rem; color:var(--cream);
+font-family:var(--font-mono); font-size:.62rem; letter-spacing:.04em; text-transform:uppercase;
+}
+.mobile-bar a svg{ width:20px; height:20px; color:var(--gold); }
+.mobile-bar a.bar-primary{ color:#fff; }
+.mobile-bar a.bar-primary svg{ color:var(--orange); }
+@media (max-width:760px){
+.mobile-bar{ display:grid; }
+.float-stack{ bottom:5.5rem; }
+body{ padding-bottom:64px; }
+}
 
 /* ================= FOOTER ================= */
 footer{ background:var(--graphite-2); color:#B9B3A2; padding:4.5rem 0 0; }
@@ -794,7 +861,12 @@ footer{ background:var(--graphite-2); color:#B9B3A2; padding:4.5rem 0 0; }
 <label for="f-message">Message</label>
 <textarea id="f-message" name="message" placeholder="Tell us about the job, site and timing" required></textarea>
 </div>
-<button type="submit" class="btn btn-primary">Send Enquiry
+<input type="hidden" name="_subject" value="New Enquiry from NETPRO Website">
+<input type="hidden" name="_cc" value="ngimzwilengbiza@gmail.com">
+<input type="hidden" name="_template" value="table">
+<input type="hidden" name="_captcha" value="false">
+<input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+<button type="submit" class="btn btn-primary" id="submitBtn">Send Enquiry
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round"/></svg>
 </button>
 <p class="form-note" id="formNote"></p>
@@ -812,8 +884,12 @@ footer{ background:var(--graphite-2); color:#B9B3A2; padding:4.5rem 0 0; }
 <span><a href="tel:+27783342552">078 334 2552</a> · <a href="tel:+27615578567">061 557 8567</a></span>
 </li>
 <li>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.6.9-.8 1-.1.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5c.1-.1.2-.3.2-.4.1-.1.1-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3s1 2.7 1.2 2.9c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2 0-.1-.2-.2-.5-.3z"/><path d="M12 21a9 9 0 1 0-7.8-4.5L3 21l4.6-1.2A9 9 0 0 0 12 21z"/></svg>
+<span><a href="https://wa.me/27783342552" target="_blank" rel="noopener">WhatsApp: 078 334 2552</a></span>
+</li>
+<li>
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linejoin="round"/></svg>
-<span><a href="mailto:ngimzwilengbiza@gmail.com">ngimzwilengbiza@gmail.com</a></span>
+<span><a href="mailto:admin@ngimzwile.co.za">admin@ngimzwile.co.za</a><br><a href="mailto:ngimzwilengbiza@gmail.com">ngimzwilengbiza@gmail.com</a></span>
 </li>
 <li>
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h5" stroke-linecap="round"/></svg>
@@ -835,6 +911,35 @@ footer{ background:var(--graphite-2); color:#B9B3A2; padding:4.5rem 0 0; }
 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Feedback on every job</li>
 <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12l5 5L20 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Adherence to spec</li>
 </ul>
+
+<div class="faq reveal" style="margin-top:5rem">
+<span class="eyebrow">Common Questions</span>
+<h3 style="color:#fff; font-size:1.7rem; margin:.9rem 0 1.5rem">Frequently Asked Questions</h3>
+<div class="faq-item">
+<button class="faq-trigger" aria-expanded="false" aria-controls="faq-1" style="color:#fff">
+<span>How quickly will NETPRO respond to my enquiry?</span><span class="acc-plus"></span>
+</button>
+<div class="faq-panel" id="faq-1"><div class="faq-panel-inner" style="color:#B9B3A2">We aim to respond to every enquiry within one business day. For urgent plant shuts or breakdowns, WhatsApp or call us directly for the fastest response.</div></div>
+</div>
+<div class="faq-item">
+<button class="faq-trigger" aria-expanded="false" aria-controls="faq-2" style="color:#fff">
+<span>Which areas does NETPRO service?</span><span class="acc-plus"></span>
+</button>
+<div class="faq-panel" id="faq-2"><div class="faq-panel-inner" style="color:#B9B3A2">We're based in Richards Bay, KwaZulu-Natal, and serve public sector, private sector and state-owned enterprise clients across the region, with experience in smelters, production plants, mines, storage facilities and chemical plants.</div></div>
+</div>
+<div class="faq-item">
+<button class="faq-trigger" aria-expanded="false" aria-controls="faq-3" style="color:#fff">
+<span>Is NETPRO B-BBBEE compliant?</span><span class="acc-plus"></span>
+</button>
+<div class="faq-panel" id="faq-3"><div class="faq-panel-inner" style="color:#B9B3A2">Yes — NETPRO is a Level 1 B-BBBEE contributor, 100% Black-owned and 67% Black Female-owned, so partnering with us supports your own procurement scorecard.</div></div>
+</div>
+<div class="faq-item">
+<button class="faq-trigger" aria-expanded="false" aria-controls="faq-4" style="color:#fff">
+<span>Can NETPRO supply labour on short notice for a plant shut?</span><span class="acc-plus"></span>
+</button>
+<div class="faq-panel" id="faq-4"><div class="faq-panel-inner" style="color:#B9B3A2">Yes. We keep a roster of qualified and semi-skilled artisans — fitters, welders, boilermakers, riggers, electricians and instrument mechanicians — ready to deploy for shuts and projects.</div></div>
+</div>
+</div>
 </div>
 </section>
 </main>
@@ -876,7 +981,7 @@ footer{ background:var(--graphite-2); color:#B9B3A2; padding:4.5rem 0 0; }
 <ul>
 <li>73 Dollar drive, unit 19,<br>Richards Bay(KZN),3900</li>
 <li><a href="tel:+27783342552">078 334 2552</a></li>
-<li><a href="mailto:ngimzwilengbiza@gmail.com">ngimzwilengbiza@gmail.com</a></li>
+<li><a href="mailto:admin@ngimzwile.co.za">admin@ngimzwile.co.za</a></li>
 </ul>
 </div>
 </div>
@@ -885,6 +990,34 @@ footer{ background:var(--graphite-2); color:#B9B3A2; padding:4.5rem 0 0; }
 <span>CK Reg 2016/634149/07</span>
 </div>
 </footer>
+
+<!-- ================= FLOATING WHATSAPP + CALL ================= -->
+<div class="float-stack" aria-label="Quick contact">
+<a class="float-btn call-btn" href="tel:+27783342552" aria-label="Call NETPRO">
+<span class="float-tooltip">Call 078 334 2552</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2L7.9 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2z" stroke-linejoin="round"/></svg>
+</a>
+<a class="float-btn wa-btn" href="https://wa.me/27783342552?text=Hi%20NETPRO%2C%20I%27d%20like%20to%20enquire%20about%20your%20services." target="_blank" rel="noopener" aria-label="Chat with NETPRO on WhatsApp">
+<span class="float-tooltip">Chat on WhatsApp</span>
+<svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.6.9-.8 1-.1.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5c.1-.1.2-.3.2-.4.1-.1.1-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3s1 2.7 1.2 2.9c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2 0-.1-.2-.2-.5-.3z"/><path d="M12 21a9 9 0 1 0-7.8-4.5L3 21l4.6-1.2A9 9 0 0 0 12 21z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+</a>
+</div>
+
+<!-- ================= MOBILE STICKY BAR ================= -->
+<nav class="mobile-bar" aria-label="Quick actions">
+<a href="tel:+27783342552">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.5 2L7.9 9.6a16 16 0 0 0 6 6l1.2-1.2a2 2 0 0 1 2-.5c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.7 2z" stroke-linejoin="round"/></svg>
+Call
+</a>
+<a href="https://wa.me/27783342552?text=Hi%20NETPRO%2C%20I%27d%20like%20to%20enquire%20about%20your%20services." target="_blank" rel="noopener">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.6.9-.8 1-.1.2-.3.2-.6.1-.3-.1-1.2-.5-2.3-1.5-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5c.1-.1.2-.3.2-.4.1-.1.1-.3 0-.4-.1-.1-.6-1.5-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 .9-1 2.3s1 2.7 1.2 2.9c.1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2 0-.1-.2-.2-.5-.3z"/><path d="M12 21a9 9 0 1 0-7.8-4.5L3 21l4.6-1.2A9 9 0 0 0 12 21z" stroke-linejoin="round"/></svg>
+WhatsApp
+</a>
+<a href="#contact" class="bar-primary">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6" stroke-linejoin="round"/></svg>
+Quote
+</a>
+</nav>
 
 <script>
 (function(){
@@ -950,7 +1083,7 @@ countObserver.unobserve(el);
 }, { threshold:.6 });
 document.querySelectorAll('[data-count-to]').forEach(function(el){ countObserver.observe(el); });
 
-/* accordion */
+/* accordion (services) */
 document.querySelectorAll('.acc-trigger').forEach(function(btn){
 var panel = document.getElementById(btn.getAttribute('aria-controls'));
 if(btn.getAttribute('aria-expanded') === 'true'){ panel.style.maxHeight = panel.scrollHeight + 'px'; }
@@ -972,19 +1105,65 @@ var openPanel = document.querySelector('.acc-trigger[aria-expanded="true"]');
 if(openPanel){ document.getElementById(openPanel.getAttribute('aria-controls')).style.maxHeight = 'none'; }
 });
 
-/* contact form -> mailto */
+/* faq accordion (independent toggles, multiple can be open) */
+document.querySelectorAll('.faq-trigger').forEach(function(btn){
+var panel = document.getElementById(btn.getAttribute('aria-controls'));
+btn.addEventListener('click', function(){
+var isOpen = btn.getAttribute('aria-expanded') === 'true';
+btn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+panel.style.maxHeight = isOpen ? 0 : panel.scrollHeight + 'px';
+});
+});
+
+/* contact form -> sends directly via FormSubmit (no backend needed) */
 var form = document.getElementById('quoteForm');
 var note = document.getElementById('formNote');
+var submitBtn = document.getElementById('submitBtn');
+var FORM_ENDPOINT = 'https://formsubmit.co/ajax/admin@ngimzwile.co.za';
+
 form.addEventListener('submit', function(e){
 e.preventDefault();
-var name = form.name.value.trim(), email = form.email.value.trim(), company = form.company.value.trim(),
-service = form.service.value, message = form.message.value.trim();
-if(!name || !email || !message){ note.textContent = 'Please fill in your name, email and message.'; return; }
-var subject = 'New Enquiry: ' + service + ' — ' + name;
-var body = 'Name: ' + name + '\nEmail: ' + email + '\nCompany: ' + (company || '—') + '\nService: ' + service + '\n\nMessage:\n' + message;
-var mailto = 'mailto:ngimzwilengbiza@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+var name = form.name.value.trim(), email = form.email.value.trim(), message = form.message.value.trim();
+if(!name || !email || !message){
+note.textContent = 'Please fill in your name, email and message.';
+note.className = 'form-note is-error';
+return;
+}
+if(form._honey.value){ return; } // honeypot bot trap
+
+submitBtn.setAttribute('disabled','true');
+note.textContent = 'Sending your enquiry…';
+note.className = 'form-note';
+
+var payload = new FormData(form);
+
+fetch(FORM_ENDPOINT, {
+method: 'POST',
+headers: { 'Accept': 'application/json' },
+body: payload
+})
+.then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
+.then(function(result){
+if(result.ok){
+note.textContent = 'Thank you — your enquiry has been sent to NETPRO. We\'ll be in touch soon.';
+note.className = 'form-note is-success';
+form.reset();
+} else {
+throw new Error('Form service error');
+}
+})
+.catch(function(){
+/* fallback: open the user's email app so the enquiry is never lost */
+var subject = 'New Enquiry: ' + form.service.value + ' — ' + name;
+var body = 'Name: ' + name + '\nEmail: ' + email + '\nCompany: ' + (form.company.value.trim() || '—') + '\nService: ' + form.service.value + '\n\nMessage:\n' + message;
+var mailto = 'mailto:admin@ngimzwile.co.za?cc=ngimzwilengbiza@gmail.com&subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 window.location.href = mailto;
-note.textContent = 'Opening your email app to send this to NETPRO…';
+note.textContent = 'We could not reach our form service, so we\'ve opened your email app instead.';
+note.className = 'form-note is-error';
+})
+.finally(function(){
+submitBtn.removeAttribute('disabled');
+});
 });
 })();
 </script>
